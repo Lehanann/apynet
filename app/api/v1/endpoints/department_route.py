@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from databases.postgresql import get_session
-from app.services.department_service import DepartmentService
+from app.logic.department_service import DepartmentService
 from app.schemas.department_schema import DepartmentCreate, DepartmentRead, DepartmentUpdate
 
 router = APIRouter(prefix="/departments", tags=["departments"])

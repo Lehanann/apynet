@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from databases.postgresql import get_session
-from app.services.company_service import CompanyService
+from app.logic.company_service import CompanyService
 from app.schemas.company_schema import CompanyCreate, CompanyRead, CompanyUpdate
 
 router = APIRouter(prefix="/companies", tags=["companies"])
