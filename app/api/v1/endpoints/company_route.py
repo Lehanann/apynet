@@ -45,7 +45,7 @@ async def update_company(company_id: int, data: CompanyUpdate, db: AsyncSession 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
-@router.delete("/{company_id}", response_model=CompanyRead)
+@router.delete("/{company_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_company(company_id: int, db: AsyncSession = Depends(get_session)):
     service = CompanyService(db)
     try:

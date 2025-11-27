@@ -67,8 +67,8 @@ class CorporateService:
         :param corporate_id: identifiant of corporate
         :type corporate_id: int
         """
-        deleted = await self.repository.delete(corporate_id)
-        if not deleted:
+        corporate = await self.repository.delete(corporate_id)
+        if not corporate:
             raise ValueError("corporate cannot deleted!")
         return True
 

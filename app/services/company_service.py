@@ -45,8 +45,8 @@ class CompanyService:
         return await self.repository.update(company_id, data)
     
     async def delete_company(self, company_id: int):
-        deleted = await self.repository.delete(company_id)
-        if not deleted:
+        company = await self.repository.delete(company_id)
+        if not company:
             raise ValueError("Company cannot deleted!")
         return {"message": "company was successfully deleted!"}
         
