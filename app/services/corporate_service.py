@@ -5,14 +5,14 @@ from app.schemas.corporate_schema import CorporateCreate, CorporateUpdate
 
 class CorporateService:
     def __init__(self, db:AsyncSession):
-        self.repositories = CorporateRepository(db)
+        self.repository = CorporateRepository(db)
 
     async def list_corporates(self):
         """
         Docstring for list_corporates
         return a list of corporates in the db
         """
-        return await self.repositories.get_all()
+        return await self.repository.get_all()
 
     async def get_corporate(self,corporate_id: int):
         """
@@ -22,7 +22,7 @@ class CorporateService:
         :param corporate_id: corporate identifiant
         :type corporate_id: int
         """
-        corporate = await self.repositories.get_by_id(corporate_id)
+        corporate = await self.repository.get_by_id(corporate_id)
         if not corporate:
             raise ValueError("Corporate not found")
         return corporate
@@ -35,9 +35,9 @@ class CorporateService:
         :param data: Object based on the pydantic schema 'CorporateCreate' containing necessary field "name"
         :type data: CorporateCreate
         """
-        if await self.repositories.get_by_name(data.name):
+        if await self.repository.get_by_name(data.name):
             raise ValueError(f"the corporate {data.name} already exists!")
-        return await self.repositories.create(data)
+        return await self.repository.create(data)
 
     async def update_corporate(self,corporate_id: int, data: CorporateUpdate):
         """
@@ -49,15 +49,15 @@ class CorporateService:
         :param data: object based on the pydantic schema 'CorporateUpdate'
         :type data: CorporateUpdate
         """
-        corporate = await self.repositories.get_by_id(corporate_id)
+        corporate = await self.repository.get_by_id(corporate_id)
         if not corporate:
             raise ValueError("corporate not found")
 
         if data.name and data.name != corporate.name:
-            if await self.repositories.get_by_name(data.name):
+            if await self.repository.get_by_name(data.name):
                 raise ValueError(f"The name {data.name} already exist")
 
-        return await self.repositories.update(corporate_id, data)
+        return await self.repository.update(corporate_id, data)
 
     async def delete_corporate(self, corporate_id: int):
         """
@@ -67,7 +67,7 @@ class CorporateService:
         :param corporate_id: identifiant of corporate
         :type corporate_id: int
         """
-        deleted = await self.repositories.delete(corporate_id)
+        deleted = await self.repository.delete(corporate_id)
         if not deleted:
             raise ValueError("corporate cannot deleted!")
         return True
