@@ -7,11 +7,11 @@ from app.repositories.service_repository import ServiceRepository
 
 router = APIRouter(prefix="/services", tags=["services"])
 
-def get_service_service(db: AsyncSession = Depends(get_session)) -> ServiceManager:
+def get_service_manager(db: AsyncSession = Depends(get_session)) -> ServiceManager:
     return ServiceManager(ServiceRepository(db), db)
 
 @router.get("/",response_model=list[ServiceRead])
-async def list_services(service: ServiceManager = Depends(get_service_service)):
+async def list_services(service: ServiceManager = Depends(get_service_manager)):
     """
     Retrieve a list of all services from the database.
 
@@ -21,7 +21,7 @@ async def list_services(service: ServiceManager = Depends(get_service_service)):
     Args:
         service (ServiceManager, optional): The service layer for handling
             service-related operations. This is injected automatically using
-            `Depends(get_service_service)`.
+            `Depends(get_service_manager)`.
 
     Returns:
         List[ServiceRead]: A list of services represented by the `ServiceRead`
@@ -30,7 +30,7 @@ async def list_services(service: ServiceManager = Depends(get_service_service)):
     return await service.get_all()
 
 @router.get("/{service_id}", response_model=ServiceRead)
-async def get_service(service_id: int, service: ServiceManager = Depends(get_service_service)) -> ServiceRead:
+async def get_service(service_id: int, service: ServiceManager = Depends(get_service_manager)) -> ServiceRead:
     """
     Retrieve service by its ID from the database.
 
@@ -42,7 +42,7 @@ async def get_service(service_id: int, service: ServiceManager = Depends(get_ser
         Args:
         service (ServiceManager, optional): The service layer for handling
             service-related operations. This is injected automatically using
-            `Depends(get_service_service)`.
+            `Depends(get_service_manager)`.
 
     Returns:
         service (ServiceRead): A service represented by the `ServiceRead`
@@ -52,12 +52,12 @@ async def get_service(service_id: int, service: ServiceManager = Depends(get_ser
     return await service.get_by_id(service_id)
     
 """@router.get("/service/{service_name}", response_model=ServiceRead)
-async def get_service_by_name(service_name: str, service: ServiceManager = Depends(get_service_service)):
+async def get_service_by_name(service_name: str, service: ServiceManager = Depends(get_service_manager)):
     service = ServiceManager(db)
     return await service.get_service_by_name(service_name)"""
 
 @router.post("/", response_model=dict[str,str], status_code=status.HTTP_201_CREATED)
-async def create_service(data: ServiceCreate, service: ServiceManager = Depends(get_service_service)) -> dict[str,str]:
+async def create_service(data: ServiceCreate, service: ServiceManager = Depends(get_service_manager)) -> dict[str,str]:
     """
     Create a new service.
 
@@ -65,7 +65,7 @@ async def create_service(data: ServiceCreate, service: ServiceManager = Depends(
         data (ServiceCreate): The datas used to create the service.
         service (ServiceManager, optional): The service layer for handling
             service-related operations. This is injected automatically using
-            `Depends(get_service_service)`.
+            `Depends(get_service_manager)`.
 
     Raises:
         HTTPException: If the service creation fails or if the service name already exists.
@@ -78,7 +78,7 @@ async def create_service(data: ServiceCreate, service: ServiceManager = Depends(
    
 @router.put("/{service_id}", response_model=dict[str,str], status_code=status.HTTP_200_OK)
 @router.patch("/{service_id}", response_model=dict[str,str], status_code=status.HTTP_200_OK)
-async def update_service(service_id: int, data: ServiceUpdate, service: ServiceManager = Depends(get_service_service)) -> dict[str,str]:
+async def update_service(service_id: int, data: ServiceUpdate, service: ServiceManager = Depends(get_service_manager)) -> dict[str,str]:
     """
     Update a service by its ID.
 
@@ -87,7 +87,7 @@ async def update_service(service_id: int, data: ServiceUpdate, service: ServiceM
         data (ServiceUpdate): The data used to update the service.
         service (ServiceManager, optional): The service layer for handling
             service-related operations. This is injected automatically using
-            `Depends(get_service_service)`.
+            `Depends(get_service_manager)`.
 
     Raises:
         HTTPException: if the name already exist or if the service is not found by its ID.
@@ -100,7 +100,7 @@ async def update_service(service_id: int, data: ServiceUpdate, service: ServiceM
     return {"message": "the service updated successfully."}
     
 @router.delete("/{service_id}", response_model=dict[str,str], status_code=status.HTTP_200_OK)
-async def delete_service(service_id: int, service: ServiceManager = Depends(get_service_service)) -> dict[str,str]:
+async def delete_service(service_id: int, service: ServiceManager = Depends(get_service_manager)) -> dict[str,str]:
     """
     Delete a service by its ID.
 
@@ -108,7 +108,7 @@ async def delete_service(service_id: int, service: ServiceManager = Depends(get_
         service_id (int): Unique identifier of the service.
         service (ServiceManager, optional): The service layer for handling
             service-related operations. This is injected automatically using
-            `Depends(get_service_service)`.
+            `Depends(get_service_manager)`.
 
     Raises:
         HTTPException: if the service with the specified ID is not found.
