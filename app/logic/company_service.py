@@ -1,52 +1,21 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.repositories.company_repository import CompanyRepository
-from app.schemas.company_schema import CompanyCreate, CompanyUpdate
+from app.schemas.company_schema import CompanyCreate, CompanyUpdate, CompanyRead
+from app.logic.base_service import BaseService, RepositoryType
 
-class CompanyService:
-    
-    def __init__(self, db: AsyncSession):
-        self.db = db
-        self.repository = CompanyRepository(db)
+class CompanyService(BaseService[CompanyRepository, CompanyCreate, CompanyUpdate, CompanyRead]):
+    """
+    Service for handling company-related operations.
 
-    async def list_companies(self):
-        return await self.repository.get_all()
-    
-    async def get_company(self, company_id: int):
-        company = await self.repository.get_by_id(company_id)
-        if not company:
-            raise ValueError("Company not found!")
-        
-        return company
-    
-    async def get_company_by_name(self, company_name: str):
-        company = await self.repository.get_by_name(company_name)
-        if not company:
-            raise ValueError("Company not found!")
-        
-        return company
-    
-    async def create_company(self, data: CompanyCreate):
-        
-        if await self.repository.get_by_name(data.name):
-            raise ValueError(f'Error, the company name: {data.name} already exists!')
-        
-        return await self.repository.create(data)
-    
-    async def update_company(self, company_id: int, data: CompanyCreate):
+    Inherits from BaseService to provide CRUD operations using the Company repository.
+    """
 
-        company = await self.repository.get_by_id(company_id)
-        if not company:
-            raise ValueError("Company not found!")
-        
-        if data.name and data.name != company.name:
-            if await self.repository.get_by_name(data.name):
-                raise ValueError(f"The name {data.name} already exist")
+    def __init__(self, repository: CompanyRepository, db: AsyncSession):
+        """
+        Initialize the CompanyService with the Company repository and an asynchronous database session.
 
-        return await self.repository.update(company_id, data)
-    
-    async def delete_company(self, company_id: int):
-        company = await self.repository.delete(company_id)
-        if not company:
-            raise ValueError("Company cannot deleted!")
-        return {"message": "company was successfully deleted!"}
-        
+        Args:
+            repository (CompanyRepository): The repository for performing CRUD operations on Company entities.
+            db (AsyncSession): The asynchronous database session used for SQL operations.
+        """
+        super().__init__(repository, db)

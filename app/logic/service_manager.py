@@ -1,38 +1,21 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.repositories.service_repository import ServiceRepository
-from app.schemas.service_schema import ServiceCreate, ServiceUpdate
+from app.schemas.service_schema import ServiceCreate, ServiceUpdate, ServiceRead
+from app.logic.base_service import BaseService, RepositoryType
 
-class ServiceManager:
-    def __init__(self, db: AsyncSession):
-        self.repository = ServiceRepository(db)
+class ServiceManager(BaseService[ServiceRepository, ServiceCreate, ServiceUpdate, ServiceRead]):
+    """
+    Service for handling service-related operations.
 
-    async def list_services(self):
-        return await self.repository.get_all()
-    
-    async def get_service(self, service_id: int):
-        service = await self.repository.get_by_id(service_id)
-        if not service:
-            raise ValueError("service not found")
-        return service
+    Inherits from BaseService to provide CRUD operations using the Service repository.
+    """
 
-    async def create_service(self, data: ServiceCreate):
-        if await self.repository.get_by_id(data.name):
-            raise ValueError(f"the service name: {data.name} already exists!")
-        return await self.repository.create(data)
-    
-    async def update_service(self, service_id, data: ServiceUpdate):
-        service = await self.repository.get_by_id(service_id)
-        if not service:
-            raise ValueError("service not found!")
-        
-        if data.name and data.name != service.name:
-            if await self.repository.get_by_name(data.name):
-                raise ValueError(f"the service name: {data.name} already exists!")
-        return await self.repository.update(service_id, data)
-    
-    async def delete_service(self, service_id: int):
-        service = await self.repository.get_by_id(service_id)
-        if not service:
-            raise ValueError("service not found")
-        return {"message": "service successfully deleted"}
-    
+    def __init__(self, repository: ServiceRepository, db: AsyncSession):
+        """
+        Initialize the ServiceManager with the Service repository and an asynchronous database session.
+
+        Args:
+            repository (ServiceRepository): The repository for performing CRUD operations on Service entities.
+            db (AsyncSession): The asynchronous database session used for SQL operations.
+        """
+        super().__init__(repository, db)

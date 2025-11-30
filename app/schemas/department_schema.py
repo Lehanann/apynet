@@ -1,18 +1,55 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 
 class DepartmentBase(BaseModel):
-    name: str
-    company_id: int
+    """
+    Base schema for the department, shared by create, update, and read operations and inherited by other schemas.
+
+    Attributes:
+        name (str): Official name of the department.
+        company_id (int): ID of the parent company.
+
+    Notes:
+        - The name must be 100 characters max.
+        - The name is required.
+        - The company_id is required and refers to the parent company.
+    """
+    name: str = Field(..., max_length=100, description="Official name of the department.")
+    company_id: int = Field(..., description="ID of the parent company.")
 
 class DepartmentCreate(DepartmentBase):
+    """
+    Schema used for creating a new department.
+
+    Inherits all fields from DepartmentBase schema.
+    """
     pass
 
 class DepartmentUpdate(BaseModel):
-    name: Optional[str] = None
-    company_id: Optional[int] = None
+    """
+    Schema used when updating an existing department.
+
+    All fields are optional. Only provided fields will be updated. 
+
+    Attributes:
+        name (Optional[str]): Updated name of the department.
+        company_id (Optional[int]): Updated parent company ID.
+    
+    Notes:
+        - The name must be 100 characters max.
+    """
+    name: Optional[str] = Field(None, max_length=100, description="Updated name of the department.")
+    company_id: Optional[int] = Field(None, description="Updated ID of the parent company.")
 
 class DepartmentRead(DepartmentBase):
+    """
+    Schema used when reading a department in the database.
+
+    Inherits all fields from DepartmentBase schema.
+
+    Attributes:
+        id_department (int): Unique identifier of the department.
+    """
     id_department: int
 
     model_config = ConfigDict(from_attributes=True)

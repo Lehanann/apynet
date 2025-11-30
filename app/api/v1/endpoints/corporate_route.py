@@ -1,90 +1,120 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from databases.postgresql import get_session
-from app.schemas.corporate_schema import CorporateUpdate, CorporateRead, CorporateCreate
 from app.logic.corporate_service import CorporateService
+from app.schemas.corporate_schema import CorporateCreate, CorporateRead, CorporateUpdate
+from app.repositories.corporate_repository import CorporateRepository
 
 router = APIRouter(prefix="/corporates", tags=["corporates"])
 
-@router.get("/", response_model=list[CorporateRead])
-async def list_corporates(db: AsyncSession = Depends(get_session)):
+def get_corporate_service(db: AsyncSession = Depends(get_session)) -> CorporateService:
+    return CorporateService(CorporateRepository(db), db)
+
+@router.get("/",response_model=list[CorporateRead])
+async def list_corporates(service: CorporateService = Depends(get_corporate_service)):
     """
-    Docstring for list_corporates
-    Route to get a list of corporates -> method GET 
-    :param db: Description
-    :type db: AsyncSession
+    Retrieve a list of all corporates from the database.
+
+    This endpoint fetches all corporates stored in the database and returns 
+    them in the format specified by the `CorporateRead` schema.
+
+    Args:
+        service (CorporateService, optional): The service layer for handling
+            corporate-related operations. This is injected automatically using
+            `Depends(get_corporate_service)`.
+
+    Returns:
+        List[CorporateRead]: A list of corporates represented by the `CorporateRead`
+            schema, which includes relevant corporate details such as name and ID.
     """
-    service = CorporateService(db)
-    return await service.list_corporates()
+    return await service.get_all()
 
 @router.get("/{corporate_id}", response_model=CorporateRead)
-async def get_corporate(corporate_id: int, db:AsyncSession = Depends(get_session)):
+async def get_corporate(corporate_id: int, service: CorporateService = Depends(get_corporate_service)) -> CorporateRead:
     """
-    Docstring for get_corporate
-    Route to get a corporate by id -> method GET
+    Retrieve corporate by its ID from the database.
+
+    This endpoint fetches a corporate by its ID stored in the database and returns 
+    them in the format specified by the `CorporateRead` schema.
+
+    Args:
+        corporate_id (int): Unique identifier of th ecorporate
+        Args:
+        service (CorporateService, optional): The service layer for handling
+            corporate-related operations. This is injected automatically using
+            `Depends(get_corporate_service)`.
+
+    Returns:
+        corporate (CorporateRead): A corporate represented by the `CorporateRead`
+            schema, which includes relevant corporate details such as name and ID.
+    """
     
-    :param corporate_id: Identifiant of corporate
-    :type corporate_id: int
-    :param db: Description
-    :type db: AsyncSession
-    """
-    service = CorporateService(db)
-    try:
-        return await service.get_corporate(corporate_id)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-
-@router.post("/",response_model=CorporateRead, status_code=status.HTTP_201_CREATED)
-async def create_corporate(data: CorporateCreate, db: AsyncSession = Depends(get_session)):
-    """
-    Docstring for create_corporate
-    Route to create a new corporate -> method POST
+    return await service.get_by_id(corporate_id)
     
-    :param data: Schema of validation 
-    :type data: CorporateCreate
-    :param db: 
-    :type db: AsyncSession
-    """
+"""@router.get("/corporate/{corporate_name}", response_model=CorporateRead)
+async def get_corporate_by_name(corporate_name: str, service: CorporateService = Depends(get_corporate_service)):
     service = CorporateService(db)
-    try:
-        return await service.create_corporate(data)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return await service.get_corporate_by_name(corporate_name)"""
 
-
-@router.put("/{corporate_id}", response_model=CorporateRead)
-@router.patch("/{corporate_id}", response_model=CorporateRead)
-async def update_corporate(corporate_id: int, data: CorporateUpdate, db: AsyncSession = Depends(get_session)):
+@router.post("/", response_model=dict[str,str], status_code=status.HTTP_201_CREATED)
+async def create_corporate(data: CorporateCreate, service: CorporateService = Depends(get_corporate_service)) -> dict[str,str]:
     """
-    Docstring for update_corporate
-    Route to update a corporate -> method PUT or PATCH
+    Create a new corporate.
 
-    :param corporate_id: Identifiant corporate
-    :type corporate_id: int
-    :param data: Description
-    :type data: CorporateUpdate
-    :param db: Description
-    :type db: AsyncSession
-    """
-    service = CorporateService(db)
-    try:
-        return await service.update_corporate(corporate_id, data)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    Args:
+        data (CorporateCreate): The datas used to create the corporate.
+        service (CorporateService, optional): The service layer for handling
+            corporate-related operations. This is injected automatically using
+            `Depends(get_corporate_service)`.
 
-@router.delete("/{corporate_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_corporate(corporate_id: int, db: AsyncSession = Depends(get_session)):
+    Raises:
+        HTTPException: If the corporate creation fails or if the corporate name already exists.
+
+    Returns:
+        dict[str,str]: A dictionary containing a success message if the corporate was created successfully.
     """
-    Docstring for delete_corporate
-    Route to delete a corporate -> method DELETE
+    await service.create(data)
+    return {"message": "Corporate created successfully!"}
+   
+@router.put("/{corporate_id}", response_model=dict[str,str], status_code=status.HTTP_200_OK)
+@router.patch("/{corporate_id}", response_model=dict[str,str], status_code=status.HTTP_200_OK)
+async def update_corporate(corporate_id: int, data: CorporateUpdate, service: CorporateService = Depends(get_corporate_service)) -> dict[str,str]:
+    """
+    Update a corporate by its ID.
+
+    Args:
+        corporate_id (int): Unique identifier of the corporate.
+        data (CorporateUpdate): The data used to update the corporate.
+        service (CorporateService, optional): The service layer for handling
+            corporate-related operations. This is injected automatically using
+            `Depends(get_corporate_service)`.
+
+    Raises:
+        HTTPException: if the name already exist or if the corporate is not found by its ID.
+
+    Returns:
+        dict[str,str]: A dictionary containing a success message if the corporate was updated successfully.
+    """
     
-    :param corporate_id: Identifiant coporate
-    :type corporate_id: int
-    :param db: Description
-    :type db: AsyncSession
+    await service.update(corporate_id, data)
+    return {"message": "the corporate updated successfully."}
+    
+@router.delete("/{corporate_id}", response_model=dict[str,str], status_code=status.HTTP_200_OK)
+async def delete_corporate(corporate_id: int, service: CorporateService = Depends(get_corporate_service)) -> dict[str,str]:
     """
-    service = CorporateService(db)
-    try:
-        return await service.delete_corporate(corporate_id)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    Delete a corporate by its ID.
+
+    Args:
+        corporate_id (int): Unique identifier of the corporate.
+        service (CorporateService, optional): The service layer for handling
+            corporate-related operations. This is injected automatically using
+            `Depends(get_corporate_service)`.
+
+    Raises:
+        HTTPException: if the corporate with the specified ID is not found.
+    Returns:
+        dict[str,str]: A dictionary containing a success message if the corporate was deleted successfully.
+    """
+
+    await service.delete(corporate_id)
+    return {"message": "the corporate deleted successfully."}
