@@ -25,21 +25,15 @@ class ServiceCreate(ServiceBase):
     """
     pass
 
-class ServiceUpdate(BaseModel):
+class ServiceUpdate(ServiceBase):
     """
     Schema used when updating an existing service.
 
-    All fields are optional. Only provided fields will be updated. 
-
-    Attributes:
-        name (Optional[str]): Updated name of the service.
-        department_id (Optional[int]): Updated parent department ID.
-    
-    Notes:
-        - The name must be 100 characters max.
+    All fields inherited from ServiceBase become optional.
+    Only fields provided in the request will be updated.
     """
-    name: Optional[str] = Field(None, max_length=100, description="Updated name of the service.")
-    department_id: Optional[int] = Field(None, description="Updated ID of the parent department.")
+    name: Optional[str] = None
+    department_id: Optional[int] = None
 
 class ServiceRead(ServiceBase):
     """

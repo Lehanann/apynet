@@ -25,22 +25,15 @@ class CompanyCreate(CompanyBase):
     """
     pass
 
-class CompanyUpdate(BaseModel):
+class CompanyUpdate(CompanyBase):
     """
     Schema used when updating an existing company.
 
-    All fields are optional. Only provided fields will be updated.
-
-    Attributes:
-        name (Optional[str]): Updated name of the company.
-        corporate_id (Optional[int]): Updated parent corporate ID.
-
-    Notes:
-    - The name, if provided, must be a string with a maximum length of 100 characters.
-    - The corporate_id, if provided, should refer to the updated parent corporate.
+    All fields inherited from CompanyBase become optional.
+    Only fields provided in the request will be updated.
     """
-    name: Optional[str] = Field(None, max_length=100, description="Updated name of the company.")
-    corporate_id: Optional[int] = Field(None, description="Updated parent corporate ID.")
+    name: Optional[str] = None
+    corporate_id: Optional[int] = None
 
 class CompanyRead(CompanyBase):
     """

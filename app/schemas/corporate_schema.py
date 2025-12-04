@@ -23,19 +23,14 @@ class CorporateCreate(CorporateBase):
     """
     pass
 
-class CorporateUpdate(BaseModel):
+class CorporateUpdate(CorporateBase):
     """
     Schema used when updating an existing corporate.
 
-    All fields are optional. Only provided fields will be updated.
-
-    Attributes:
-        name (Optional[str]): Updated name of the corporate.
-    
-    Notes:
-        - The name must be 100 characters max.
+    All fields inherited from CorporateBase become optional.
+    Only fields provided in the request will be updated.
     """
-    name: Optional[str] = Field(None,max_length=100, description="Updated name of the corporate.")
+    name: Optional[str] = None
 
 
 class CorporateRead(CorporateBase):

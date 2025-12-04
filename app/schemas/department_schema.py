@@ -25,21 +25,15 @@ class DepartmentCreate(DepartmentBase):
     """
     pass
 
-class DepartmentUpdate(BaseModel):
+class DepartmentUpdate(DepartmentBase):
     """
     Schema used when updating an existing department.
 
-    All fields are optional. Only provided fields will be updated. 
-
-    Attributes:
-        name (Optional[str]): Updated name of the department.
-        company_id (Optional[int]): Updated parent company ID.
-    
-    Notes:
-        - The name must be 100 characters max.
+    All fields inherited from DepartmentBase become optional.
+    Only fields provided in the request will be updated.
     """
-    name: Optional[str] = Field(None, max_length=100, description="Updated name of the department.")
-    company_id: Optional[int] = Field(None, description="Updated ID of the parent company.")
+    name: Optional[str] = None
+    company_id: Optional[int] = None
 
 class DepartmentRead(DepartmentBase):
     """

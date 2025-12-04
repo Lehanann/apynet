@@ -67,6 +67,7 @@ CREATE TABLE professions (
 CREATE TABLE positions (
     id_position SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

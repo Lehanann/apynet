@@ -33,29 +33,17 @@ class ProfessionCreate(ProfessionBase):
     """
     pass
 
-class ProfessionUpdate(BaseModel):
+class ProfessionUpdate(ProfessionBase):
     """
     Schema used when updating an existing profession.
 
-    All fields are optional. Only provided fields will be updated.
-
-    Attributes:
-        name (Optional[str]): Official name of the profession.
-        default_account_allowed (Optional[bool]) : Indicates whether the profession requires an account.
-        default_material_allowed (Optional[bool]) : Indicates whether the profession requires materials.
-        default_material (Optional[dict[str, Any]]) : Contains a list of materials required by the profession.
-
-    Notes:
-        - The name must be 100 characters max.
-        - The name is required.
-        - Default value for account allowed is False..
-        - Default value for material allowed is False.
-        - By default, materials are empty; this is managed by the database.
+    All fields inherited from ProfessionBase become optional.
+    Only fields provided in the request will be updated.
     """
-    name: Optional[str] = Field(None,max_length=100, description="Official name of the profession." )
-    default_account_allowed: Optional[bool] = Field(None, description="Allow or deny an account for the profession.")
-    default_material_allowed: Optional[bool] = Field(None, description="Allow or deny material for the profession.")
-    default_material: Optional[dict[str, Any]] = Field(None,  description="Material by default, for the profession.")
+    name: Optional[str] = None
+    default_account_allowed: Optional[bool] = None
+    default_material_allowed: Optional[bool] = None
+    default_material: Optional[dict[str, Any]] = None
 
 class ProfessionRead(ProfessionBase):
     """

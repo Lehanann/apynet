@@ -3,3 +3,5 @@ from .corporate_route import router as corporate_router
 from .department_route import router as department_router
 from .service_route import router as service_router
 from .profession_route import router as profession_router
+from .position_route import router as position_router
+from .employee_route import router as employee_router
