@@ -63,3 +63,5 @@ class Employee(Base):
             name="chk_employee_phone",
             ),
         )
+    
+    user_account = relationship("UserAccount", back_populates="employee", uselist=False)

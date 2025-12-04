@@ -5,3 +5,4 @@ from .service_route import router as service_router
 from .profession_route import router as profession_router
 from .position_route import router as position_router
 from .employee_route import router as employee_router
+from .user_account_route import router as user_account_router

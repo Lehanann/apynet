@@ -111,7 +111,7 @@ CREATE TABLE user_accounts (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP,
-    employee_id INT NOT NULL,
+    employee_id INT NOT NULL UNIQUE,
     FOREIGN KEY (employee_id) REFERENCES employees(id_employee)
 );
 
