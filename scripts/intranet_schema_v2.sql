@@ -119,7 +119,7 @@ CREATE TABLE system_roles (
     id_system_role SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
     description TEXT,
-    permission_level SMALLINT DEFAULT 1 CHECK (permission_level >= 1),
+    permission_level SMALLINT NOT NULL DEFAULT 1 CHECK (permission_level >= 1),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

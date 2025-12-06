@@ -15,13 +15,11 @@ class Position(Base):
 
     Notes:
         - The name is required.
-        - The name must be 100 characters max.
-        - The description is required.
-        - The default value of description is empty string ''.        
+        - The name must be 100 characters max.       
     """
 
     __tablename__ = "positions"
 
     id_position: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
-    description: Mapped[str] = mapped_column(Text, nullable=False, default='', server_default='')
+    description: Mapped[str | None] = mapped_column(Text)

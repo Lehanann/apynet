@@ -7,17 +7,14 @@ class PositionBase(BaseModel):
 
     Attriubtes:
         name (str): Official name of the position.
-        description (str): Description of the position.
+        description (Optional[str]): Description of the position.
 
     Notes:
         - The name is required.
         - The name must be 100 characters max.
-        - The description is required. 
-        - For the description,the default value is empty string ''.
-
     """
     name: str = Field(..., max_length=100, description="The official name of the position.")
-    description: str = Field(..., description="The description of the position")
+    description: Optional[str] = Field(None, description="The description of the position")
 
 class PositionCreate(PositionBase):
     """
@@ -25,6 +22,7 @@ class PositionCreate(PositionBase):
 
     Inherits all fields from PositionBase schema.
     """
+    pass
 
 class PositionUpdate(PositionBase):
     """

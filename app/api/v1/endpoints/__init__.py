@@ -6,3 +6,4 @@ from .profession_route import router as profession_router
 from .position_route import router as position_router
 from .employee_route import router as employee_router
 from .user_account_route import router as user_account_router
+from .system_role_route import router as system_role_router
