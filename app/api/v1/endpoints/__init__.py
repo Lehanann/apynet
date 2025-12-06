@@ -7,3 +7,4 @@ from .position_route import router as position_router
 from .employee_route import router as employee_router
 from .user_account_route import router as user_account_router
 from .system_role_route import router as system_role_router
+from .material_route import router as material_router

@@ -1,6 +1,16 @@
 from fastapi import FastAPI
 from app.core.settings import settings
-from app.api.v1.endpoints import corporate_router, company_router, department_router, service_router, profession_router, position_router, employee_router, user_account_router, system_role_router
+from app.api.v1.endpoints import (corporate_router, 
+                                  company_router, 
+                                  department_router, 
+                                  service_router, 
+                                  profession_router, 
+                                  position_router, 
+                                  employee_router, 
+                                  user_account_router, 
+                                  system_role_router, 
+                                  material_router
+                                )
 #from app.api.v1.endpoints.company_route import router as company_router
 #from app.api.v1.endpoints.corporate_route import  router as corporate_router
 #from app.api.v1.endpoints.department_route import router as department_router
@@ -18,6 +28,7 @@ app.include_router(position_router)
 app.include_router(employee_router)
 app.include_router(user_account_router)
 app.include_router(system_role_router)
+app.include_router(material_router)
 
 @app.get("/")
 async def root_api():
