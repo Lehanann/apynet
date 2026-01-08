@@ -282,7 +282,7 @@ INSERT INTO services (name, department_id) VALUES
 ('achats', 3),
 ('commercial',4),
 ('adv',4),
-('compatabilité',5),
+('comptabilité',5),
 ('controle de gestion',5),
 ('impression', 6),
 ('confection',6),
