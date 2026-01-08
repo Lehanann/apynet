@@ -34,6 +34,25 @@ CREATE TABLE companies (
     FOREIGN KEY (corporate_id) REFERENCES corporates(id_corporate)
 );
 
+CREATE TABLE sites (
+    id_site SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    address TEXT,
+    company_id INT NOT NULL,
+    UNIQUE(name, company_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (company_id) REFERENCES companies(id_company)
+);
+
+CREATE TABLE meeting_rooms (
+    id_meeting_room SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    site_id INT NOT NULL,
+    UNIQUE(name, site_id),
+    FOREIGN KEY (site_id) REFERENCES sites(id_site)
+);
+
 CREATE TABLE departments (
     id_department SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -155,11 +174,18 @@ CREATE TABLE phone_numbers (
     id_phone SERIAL PRIMARY KEY,
     internal_number VARCHAR(4) UNIQUE,
     external_number VARCHAR(15),
-    assigned_to_employee INT,
-    assigned_to_service INT,
-    active BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (assigned_to_employee) REFERENCES employees(id_employee),
-    FOREIGN KEY (assigned_to_service) REFERENCES services(id_service)
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE phone_assignments ( 
+    id_assignment SERIAL PRIMARY KEY, 
+    phone_id INT NOT NULL UNIQUE, 
+    assigned_type VARCHAR(30) NOT NULL, 
+    assigned_id INT NOT NULL, 
+    FOREIGN KEY (phone_id) REFERENCES phone_numbers(id_phone), 
+    CHECK (
+        assigned_type IN ('employee', 'service', 'meeting_room')
+    )
 );
 
 CREATE TABLE candidates (
@@ -232,6 +258,13 @@ INSERT INTO companies (name, corporate_id) VALUES
 ('prismaflex france', 1),
 ('prismatronic', 1),
 ('fpi affiches', 1);
+INSERT INTO sites (name, address, company_id) VALUES
+("La Bourrie", "309 rte de Lyon, 69610 Haute-Rivoire", 1),
+("Les Prébendes", "rte de Lyon, 69610 Haute-Rivoire",2),
+("Wissous",NULL,1);
+
+INSERT INTO meeting_rooms (name, site_id)
+VALUES ('Salle Neptune', 1);
 
 INSERT INTO departments (name, company_id) VALUES
 ('sytèmes d information', 1),
@@ -297,11 +330,21 @@ VALUES
 INSERT INTO user_materials (user_id, material_id)
 VALUES (1, 1), (1, 2), (3, 3);
 
-INSERT INTO phone_numbers (internal_number, external_number, assigned_to_employee, assigned_to_service)
+INSERT INTO phone_numbers (internal_number, external_number) VALUES
+('1001', '+33123456701'),
+('1002', '+33123456702'),
+('1003', '+33123456703'),
+('2001', '+33123456801'),
+('3001', '+33123456901');
+
+INSERT INTO phone_assignments (phone_id, assigned_type, assigned_id)
 VALUES
-('1011', '+33123456789', 1, NULL),
-('1012', '+33123456788', 2, NULL),
-('1013', NULL, NULL, 2);
+(1, 'employee', 1), -- Jean Dupont
+(2, 'employee', 2); -- Sophie Martin
+
+INSERT INTO phone_assignments (phone_id, assigned_type, assigned_id)
+VALUES
+(4, 'service', 2); -- Service "it et infrastructure"
 
 INSERT INTO candidates (first_name, last_name, email, phone)
 VALUES
@@ -313,3 +356,111 @@ VALUES
 (1, 'telephone1', 'accepted'),
 (1, 'interview1', 'pending'),
 (2, 'telephone1', 'pending');
+
+
+-- ==========================================
+-- VUES POUR LES RESPONSABLES ET DIRECTEURS
+-- ==========================================
+
+-- Vue : responsables de départements
+CREATE OR REPLACE VIEW intranet.v_department_responsibles AS
+SELECT
+    d.id_department,
+    d.name AS department_name,
+    c.name AS company_name,
+    g.name AS corporate_name,
+    e.id_employee,
+    e.first_name,
+    e.last_name,
+    ua.work_email,
+    e.personal_phone,
+    p.name AS profession_name,
+    pos.name AS position_name,
+    e.hire_date
+FROM intranet.employees e
+JOIN intranet.departments d ON e.department_id = d.id_department
+JOIN intranet.companies c ON d.company_id = c.id_company
+JOIN intranet.corporates g ON c.corporate_id = g.id_corporate
+JOIN intranet.professions p ON e.profession_id = p.id_profession
+JOIN intranet.positions pos ON e.position_id = pos.id_position
+LEFT JOIN intranet.user_accounts ua ON e.id_employee = ua.employee_id
+WHERE pos.name IN ('responsable', 'directeur')
+ORDER BY g.name, c.name, d.name;
+
+-- Vue : responsables de services
+CREATE OR REPLACE VIEW intranet.v_service_responsibles AS
+SELECT
+    s.id_service,
+    s.name AS service_name,
+    d.name AS department_name,
+    c.name AS company_name,
+    g.name AS corporate_name,
+    e.id_employee,
+    e.first_name,
+    e.last_name,
+    ua.work_email,
+    e.personal_phone,
+    p.name AS profession_name,
+    pos.name AS position_name,
+    e.hire_date
+FROM intranet.employees e
+JOIN intranet.services s ON e.service_id = s.id_service
+JOIN intranet.departments d ON s.department_id = d.id_department
+JOIN intranet.companies c ON d.company_id = c.id_company
+JOIN intranet.corporates g ON c.corporate_id = g.id_corporate
+JOIN intranet.professions p ON e.profession_id = p.id_profession
+JOIN intranet.positions pos ON e.position_id = pos.id_position
+LEFT JOIN intranet.user_accounts ua ON e.id_employee = ua.employee_id
+WHERE pos.name IN ('responsable', 'directeur')
+ORDER BY g.name, c.name, d.name, s.name;
+
+-- Vue combinée : responsables des départements et services
+CREATE OR REPLACE VIEW intranet.v_structure_responsibles AS
+SELECT
+    'department'::TEXT AS structure_type,
+    d.id_department AS structure_id,
+    d.name AS structure_name,
+    c.name AS company_name,
+    g.name AS corporate_name,
+    e.id_employee,
+    e.first_name,
+    e.last_name,
+    ua.work_email,
+    e.personal_phone,
+    p.name AS profession_name,
+    pos.name AS position_name,
+    e.hire_date
+FROM intranet.employees e
+JOIN intranet.departments d ON e.department_id = d.id_department
+JOIN intranet.companies c ON d.company_id = c.id_company
+JOIN intranet.corporates g ON c.corporate_id = g.id_corporate
+JOIN intranet.professions p ON e.profession_id = p.id_profession
+JOIN intranet.positions pos ON e.position_id = pos.id_position
+LEFT JOIN intranet.user_accounts ua ON e.id_employee = ua.employee_id
+WHERE pos.name IN ('responsable', 'directeur')
+
+UNION ALL
+
+SELECT
+    'service'::TEXT AS structure_type,
+    s.id_service AS structure_id,
+    s.name AS structure_name,
+    c.name AS company_name,
+    g.name AS corporate_name,
+    e.id_employee,
+    e.first_name,
+    e.last_name,
+    ua.work_email,
+    e.personal_phone,
+    p.name AS profession_name,
+    pos.name AS position_name,
+    e.hire_date
+FROM intranet.employees e
+JOIN intranet.services s ON e.service_id = s.id_service
+JOIN intranet.departments d ON s.department_id = d.id_department
+JOIN intranet.companies c ON d.company_id = c.id_company
+JOIN intranet.corporates g ON c.corporate_id = g.id_corporate
+JOIN intranet.professions p ON e.profession_id = p.id_profession
+JOIN intranet.positions pos ON e.position_id = pos.id_position
+LEFT JOIN intranet.user_accounts ua ON e.id_employee = ua.employee_id
+WHERE pos.name IN ('responsable', 'directeur');
