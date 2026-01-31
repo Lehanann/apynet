@@ -260,8 +260,9 @@ INSERT INTO companies (name, corporate_id) VALUES
 ('fpi affiches', 1);
 INSERT INTO sites (name, address, company_id) VALUES
 ("La Bourrie", "309 rte de Lyon, 69610 Haute-Rivoire", 1),
-("Les Prébendes", "rte de Lyon, 69610 Haute-Rivoire",2),
-("Wissous",NULL,1);
+("Les Prébendes", "451 route de Feurs, 69610 Haute-Rivoire",2),
+("Wissous",NULL,1),
+("Saint-Laurent","Croix Grand Borne En Sève, 69930 Saint-Laurent-de-Chamousset",3);
 
 INSERT INTO meeting_rooms (name, site_id)
 VALUES ('Salle Neptune', 1);
