@@ -6,7 +6,7 @@ from datetime import datetime
 
 class UserAccount(Base):
     """
-    Represents a user account stored in the database.
+    Represents an user account stored in the database.
 
     Attributes:
         id_user (int): Unique identifier of the user account.

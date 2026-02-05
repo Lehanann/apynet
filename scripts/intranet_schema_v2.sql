@@ -39,7 +39,6 @@ CREATE TABLE sites (
     name VARCHAR(100) NOT NULL,
     address TEXT,
     company_id INT NOT NULL,
-    UNIQUE(name, company_id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (company_id) REFERENCES companies(id_company)
@@ -49,7 +48,8 @@ CREATE TABLE meeting_rooms (
     id_meeting_room SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     site_id INT NOT NULL,
-    UNIQUE(name, site_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (site_id) REFERENCES sites(id_site)
 );
 
@@ -174,6 +174,8 @@ CREATE TABLE phone_numbers (
     id_phone SERIAL PRIMARY KEY,
     internal_number VARCHAR(4) UNIQUE,
     external_number VARCHAR(15),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
@@ -237,8 +239,8 @@ DECLARE
 BEGIN
     FOR t IN 
         SELECT unnest(ARRAY[
-            'corporates','companies','departments','services',
-            'professions','positions','employees',
+            'corporates','companies','sites', 'meeting_rooms','departments','services',
+            'professions','positions','employees', 
             'user_accounts','system_roles','materials','candidates'
         ])
     LOOP
@@ -259,10 +261,10 @@ INSERT INTO companies (name, corporate_id) VALUES
 ('prismatronic', 1),
 ('fpi affiches', 1);
 INSERT INTO sites (name, address, company_id) VALUES
-("La Bourrie", "309 rte de Lyon, 69610 Haute-Rivoire", 1),
-("Les Prébendes", "451 route de Feurs, 69610 Haute-Rivoire",2),
-("Wissous",NULL,1),
-("Saint-Laurent","Croix Grand Borne En Sève, 69930 Saint-Laurent-de-Chamousset",3);
+('La Bourrie', '309 rte de Lyon, 69610 Haute-Rivoire', 1),
+('Les Prébendes', '451 route de Feurs, 69610 Haute-Rivoire',2),
+('Wissous',NULL,1),
+('Saint-Laurent','Croix Grand Borne En Sève, 69930 Saint-Laurent-de-Chamousset',3);
 
 INSERT INTO meeting_rooms (name, site_id)
 VALUES ('Salle Neptune', 1);

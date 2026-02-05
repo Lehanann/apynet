@@ -8,3 +8,6 @@ from .employee_route import router as employee_router
 from .user_account_route import router as user_account_router
 from .system_role_route import router as system_role_router
 from .material_route import router as material_router
+from .phone_number_route import router as phone_number_router
+from .site_route import router as site_router
+from .meeting_room_route import router as meeting_room_router

@@ -28,4 +28,6 @@ class Company(Base):
     corporate_id: Mapped[int] = mapped_column(ForeignKey("corporates.id_corporate"), nullable=False)
 
     corporate = relationship("Corporate", back_populates="companies")
+    sites = relationship("Site", back_populates="company")
     departments = relationship("Department", back_populates="company")
+    
