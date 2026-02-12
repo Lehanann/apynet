@@ -12,8 +12,14 @@ from app.api.v1.endpoints import (corporate_router,
                                   material_router,
                                   phone_number_router,
                                   site_router,
-                                  meeting_room_router
+                                  meeting_room_router,
+                                  candidate_router,
+                                  candidate_step_router,
+                                  phone_assignment_router
                                 )
+from app.api.v1.reporting import (responsible_router
+                                  
+                                  )
 #from app.api.v1.endpoints.company_route import router as company_router
 #from app.api.v1.endpoints.corporate_route import  router as corporate_router
 #from app.api.v1.endpoints.department_route import router as department_router
@@ -35,6 +41,10 @@ app.include_router(material_router)
 app.include_router(phone_number_router)
 app.include_router(meeting_room_router)
 app.include_router(site_router)
+app.include_router(candidate_router)
+app.include_router(candidate_step_router)
+app.include_router(phone_assignment_router)
+app.include_router(responsible_router)
 
 @app.get("/")
 async def root_api():
@@ -43,3 +53,4 @@ async def root_api():
     :return:  welcome message
     """
     return {"Message": "Welcome Intranet API - Lehanann Corp."}
+

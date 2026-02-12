@@ -11,3 +11,6 @@ from .material_route import router as material_router
 from .phone_number_route import router as phone_number_router
 from .site_route import router as site_router
 from .meeting_room_route import router as meeting_room_router
+from .candidate_route import router as candidate_router
+from .candidate_step_route import router as candidate_step_router
+from .phone_assignment_route import router as phone_assignment_router

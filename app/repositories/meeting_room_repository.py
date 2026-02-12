@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.meeting_room import MeetingRoom
+from app.models.tables.meeting_room import MeetingRoom
 from app.schemas.meeting_room_schema import MeetingRoomCreate, MeetingRoomUpdate
 from app.repositories.base_repository import BaseRepository
 

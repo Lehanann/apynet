@@ -10,6 +10,7 @@ class Site(Base):
     Attributes:
         id_site (int): Unique identifier of the Site.
         name (str): Official name of the Site.
+        address (str): Address of the site.
         company_id: Foreign key referencing the parent Company
     
     Relationships:

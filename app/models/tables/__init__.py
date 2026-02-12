@@ -11,3 +11,6 @@ from .service import Service
 from .site import Site
 from .system_roles import SystemRole
 from .user_account import UserAccount
+from .candidate import Candidate
+from .candidate_step import CandidateStep
+from .phone_assignment import PhoneAssignment

@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.employee import Employee
+from app.models.tables.employee import Employee
 from app.schemas.employee_schema import EmployeeCreate, EmployeeUpdate
 from app.repositories.base_repository import BaseRepository
 

@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.position import Position
+from app.models.tables.position import Position
 from app.schemas.position_schema import PositionCreate, PositionUpdate
 from app.repositories.base_repository import BaseRepository
 

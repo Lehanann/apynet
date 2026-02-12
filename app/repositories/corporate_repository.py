@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.corporate import Corporate
+from app.models.tables.corporate import Corporate
 from app.schemas.corporate_schema import CorporateCreate, CorporateUpdate
 from app.repositories.base_repository import BaseRepository
 

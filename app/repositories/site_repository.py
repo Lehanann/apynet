@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.site import Site
+from app.models.tables.site import Site
 from app.schemas.site_schema import SiteCreate, SiteUpdate
 from app.repositories.base_repository import BaseRepository
 

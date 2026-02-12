@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.service import Service
+from app.models.tables.service import Service
 from app.schemas.service_schema import ServiceCreate, ServiceUpdate
 from app.repositories.base_repository import BaseRepository
 

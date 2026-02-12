@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.profession import Profession
+from app.models.tables.profession import Profession
 from app.schemas.profession_schema import ProfessionCreate, ProfessionUpdate
 from app.repositories.base_repository import BaseRepository
 

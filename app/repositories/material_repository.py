@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.material import Material
+from app.models.tables.material import Material
 from app.schemas.material_schema import MaterialCreate, MaterialUpdate
 from app.repositories.base_repository import BaseRepository
 

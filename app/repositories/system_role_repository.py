@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.system_roles import SystemRole
+from app.models.tables.system_roles import SystemRole
 from app.schemas.system_role_schema import SystemRoleCreate, SystemRoleUpdate
 from app.repositories.base_repository import BaseRepository
 

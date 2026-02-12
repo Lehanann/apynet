@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.phone_number import PhoneNumber
+from app.models.tables.phone_number import PhoneNumber
 from app.schemas.phone_number_schema import PhoneNumberCreate, PhoneNumberUpdate
 from app.repositories.base_repository import BaseRepository
 

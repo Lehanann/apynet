@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.user_account import UserAccount
+from app.models.tables.user_account import UserAccount
 from app.schemas.user_account_schema import UserAccountCreate, UserAccountUpdate
 from app.repositories.base_repository import BaseRepository
 

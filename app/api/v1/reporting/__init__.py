@@ -1,0 +1,1 @@
+from .responsible_route import router as responsible_router
