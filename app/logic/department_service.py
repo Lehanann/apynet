@@ -1,9 +1,19 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.repositories.department_repository import DepartmentRepository
 from app.schemas.department_schema import DepartmentCreate, DepartmentUpdate, DepartmentRead
-from app.logic.base_service import BaseService, RepositoryType
+from app.logic.base_service import BaseService
+from fastapi import HTTPException, status
+from app.models.tables.department import Department
 
-class DepartmentService(BaseService[DepartmentRepository, DepartmentCreate, DepartmentUpdate, DepartmentRead]):
+class DepartmentService(
+    BaseService[
+        DepartmentRepository, 
+        DepartmentCreate, 
+        DepartmentUpdate, 
+        DepartmentRead,
+        Department
+        ]
+    ):
     """
     Service for handling department-related operations.
 
@@ -19,3 +29,20 @@ class DepartmentService(BaseService[DepartmentRepository, DepartmentCreate, Depa
             db (AsyncSession): The asynchronous database session used for SQL operations.
         """
         super().__init__(repository, db)
+
+    async def create(self, data: DepartmentCreate) -> Department:
+        """
+        Create a new instance of the department repository.
+
+        Args:
+            data (DepartmentCreate): Schema containing fields to create the new instance.
+
+        Raises:
+            HTTPException: if the name already exists in the repository.
+
+        Returns:
+            Department: The newly created instance.
+        """
+        if await self.repository.get_by_name(data.name):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Department name already exists")
+        return await super().create(data)

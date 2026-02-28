@@ -2,8 +2,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.tables.meeting_room import MeetingRoom
 from app.schemas.meeting_room_schema import MeetingRoomCreate, MeetingRoomUpdate
 from app.repositories.base_repository import BaseRepository
+from app.repositories.mixins.filterable_repository import FilterableRepositoryMixin
+from app.repositories.mixins.name_search_repository import NameSearchRepositoryMixin
 
-class MeetingRoomRepository(BaseRepository[MeetingRoom, MeetingRoomCreate, MeetingRoomUpdate]):
+class MeetingRoomRepository(
+    BaseRepository[
+        MeetingRoom, 
+        MeetingRoomCreate, 
+        MeetingRoomUpdate
+        ], 
+    FilterableRepositoryMixin[MeetingRoom], 
+    NameSearchRepositoryMixin[MeetingRoom]
+    ):
     """
     Repository handling CRUD operations for the MeetingRoom model.
 

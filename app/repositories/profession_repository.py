@@ -2,8 +2,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.tables.profession import Profession
 from app.schemas.profession_schema import ProfessionCreate, ProfessionUpdate
 from app.repositories.base_repository import BaseRepository
+from app.repositories.mixins.filterable_repository import FilterableRepositoryMixin
+from app.repositories.mixins.name_search_repository import NameSearchRepositoryMixin
 
-class ProfessionRepository(BaseRepository[Profession, ProfessionCreate, ProfessionUpdate]):
+class ProfessionRepository(
+    BaseRepository[
+        Profession, 
+        ProfessionCreate, 
+        ProfessionUpdate
+        ], 
+    FilterableRepositoryMixin[Profession], 
+    NameSearchRepositoryMixin[Profession]
+    ):
     """
     Repository handling CRUD operations for the Profession model.
 

@@ -2,8 +2,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.tables.position import Position
 from app.schemas.position_schema import PositionCreate, PositionUpdate
 from app.repositories.base_repository import BaseRepository
+from app.repositories.mixins.filterable_repository import FilterableRepositoryMixin
+from app.repositories.mixins.name_search_repository import NameSearchRepositoryMixin
 
-class PositionRepository(BaseRepository[Position, PositionCreate, PositionUpdate]):
+class PositionRepository(
+    BaseRepository[
+        Position, 
+        PositionCreate, 
+        PositionUpdate
+        ], 
+    FilterableRepositoryMixin[Position], 
+    NameSearchRepositoryMixin[Position]
+    ):
     """
     Repository handling CRUD operations for the Position model.
 

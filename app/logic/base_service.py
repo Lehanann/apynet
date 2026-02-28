@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import TypeVar, Generic, Optional, Dict, List
+from typing import TypeVar, Generic, Dict
 from pydantic import BaseModel
 from fastapi import HTTPException, status
 
@@ -9,7 +9,15 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 ReadSchemaType = TypeVar("ReadSchemaType", bound=BaseModel)
 ModelType = TypeVar("ModelType")
 
-class BaseService(Generic[RepositoryType, CreateSchemaType, UpdateSchemaType, ReadSchemaType]):
+class BaseService(
+    Generic[
+        RepositoryType, 
+        CreateSchemaType, 
+        UpdateSchemaType, 
+        ReadSchemaType, 
+        ModelType
+        ]
+    ):
     """
     Generic service that performs basic operations on repositories such as reading, creating, deleting, and updating.
 
@@ -46,7 +54,7 @@ class BaseService(Generic[RepositoryType, CreateSchemaType, UpdateSchemaType, Re
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found.")
         return item
     
-    async def get_all(self) -> List[ModelType]:
+    async def get_all(self) -> list[ModelType]:
         """
         Get all item from the repository.
 
@@ -67,15 +75,10 @@ class BaseService(Generic[RepositoryType, CreateSchemaType, UpdateSchemaType, Re
 
         Args:
             data (CreateSchemaType): The schema containing fields to create the instance.
-
-        Raises:
-            HTTPException: If the name already exists in the repository.
-
+            
         Returns:
             ModelType: The newly created instance.
         """
-        if await self.repository.get_by_name(data.name):
-            raise HTTPException(status_code= status.HTTP_400_BAD_REQUEST,detail=f"The name {data.name} already exists!")  
         return await self.repository.create(data)
     
     async def update(self, id: int, data: UpdateSchemaType) -> ModelType:
@@ -93,9 +96,6 @@ class BaseService(Generic[RepositoryType, CreateSchemaType, UpdateSchemaType, Re
         Returns:
             Optional[ModelType]: The updated instance.
         """
-        if data.name and await self.repository.get_by_name(data.name):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"The name {data.name} already exists!")
-        
         existing = await self.repository.get_by_id(id)
         if not existing:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found!")

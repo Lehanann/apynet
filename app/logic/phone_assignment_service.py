@@ -2,8 +2,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.repositories.phone_assignment_repository import PhoneAssignmentRepository
 from app.schemas.phone_assignment_schema import PhoneAssignmentCreate, PhoneAssignmentUpdate, PhoneAssignmentRead
 from app.logic.base_service import BaseService
+from app.models.tables.phone_assignment import PhoneAssignment
 
-class PhoneAssignmentService(BaseService[PhoneAssignmentRepository, PhoneAssignmentCreate, PhoneAssignmentUpdate, PhoneAssignmentRead]):
+class PhoneAssignmentService(
+    BaseService[
+        PhoneAssignmentRepository, 
+        PhoneAssignmentCreate, 
+        PhoneAssignmentUpdate, 
+        PhoneAssignmentRead, 
+        PhoneAssignment
+        ]
+    ):
     """
     Service for handling company-related operations.
 

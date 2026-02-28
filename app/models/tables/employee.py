@@ -1,10 +1,12 @@
+import uuid
 from enum import Enum
-from sqlalchemy import Integer, String, Date, CheckConstraint, ForeignKey, Boolean
+from sqlalchemy import Integer, String, Date, CheckConstraint, ForeignKey, Boolean, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from databases.postgresql import Base
 from datetime import date
 from sqlalchemy.dialects.postgresql import ENUM
 from app.utils.gender_enum import GenderEnum
+from sqlalchemy.dialects.postgresql import UUID
 
 class Employee(Base):
     """
@@ -35,31 +37,42 @@ class Employee(Base):
     """
     __tablename__ = "employees"
 
-    id_employee: Mapped[int] = mapped_column(Integer,primary_key=True, index=True) 
+    id_employee: Mapped[int] = mapped_column(Integer,primary_key=True, index=True)
+    matricule: Mapped[int] = mapped_column(Integer,unique=True, nullable=False, index=True)
+    document_token: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), 
+        default=uuid.uuid4(),
+        nullable=False, 
+        unique=True
+        )
     first_name: Mapped[str] = mapped_column(String(50),nullable=False) 
     last_name: Mapped[str] = mapped_column(String(50), nullable=False)
-    birth_date: Mapped[date] = mapped_column(Date)
-    gender: Mapped[GenderEnum] = mapped_column(ENUM(GenderEnum, name="gender_enum", create_type=False), nullable=False, server_default='x')
-    address: Mapped[str] = mapped_column(String(255))
-    personal_email: Mapped[str] = mapped_column(String(100), unique=True)
-    personal_phone: Mapped[str] = mapped_column(String(20))
-    social_security_number: Mapped[str] = mapped_column(String(30), unique=True)
-    emergency_contact_name: Mapped[str] = mapped_column(String(100))
-    emergency_contact_phone: Mapped[str] = mapped_column(String(20))
-    spouse_name: Mapped[str] = mapped_column(String(100))
-    spouse_phone: Mapped[str] = mapped_column(String(20))
+    birth_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    gender: Mapped[GenderEnum] = mapped_column(
+        ENUM(GenderEnum, name="gender_enum", create_type=False), 
+        nullable=False, 
+        server_default=text("'x'")
+        )
+    address: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    personal_email: Mapped[str | None] = mapped_column(String(100), unique=True, nullable=True)
+    personal_phone: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    social_security_number: Mapped[str | None] = mapped_column(String(30), unique=True, nullable=True)
+    emergency_contact_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    emergency_contact_phone: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    spouse_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    spouse_phone: Mapped[str | None] = mapped_column(String(20), nullable=True)
     profession_id: Mapped[int] = mapped_column(Integer, ForeignKey("professions.id_profession"), nullable=False)
     position_id: Mapped[int] = mapped_column(Integer, ForeignKey("positions.id_position"), nullable=False) 
-    service_id: Mapped[int] = mapped_column(Integer, ForeignKey("services.id_service")) 
-    department_id: Mapped[int] = mapped_column(Integer, ForeignKey("departments.id_department")) 
+    service_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("services.id_service"), nullable=True) 
+    department_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("departments.id_department"), nullable=True) 
     company_id: Mapped[int] = mapped_column(Integer, ForeignKey("companies.id_company"), nullable=False)
-    hire_date: Mapped[date] = mapped_column(Date)
-    leave_date: Mapped[date] = mapped_column(Date)
-    archived: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    hire_date: Mapped[date] = mapped_column(Date, server_default=text("CURRENT_DATE"))
+    leave_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    archived: Mapped[bool] = mapped_column(Boolean, default=False, server_default=text("false"), nullable=False)
 
     __table_args__ = (
         CheckConstraint(
-            "personal_phone ~ '^[0-9]{10}$'",
+            "personal_phone ~ '^[0-9+ ]*$'",
             name="chk_employee_phone",
             ),
         )

@@ -1,9 +1,17 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from app.models.tables.candidate_step import CandidateStep
 from app.schemas.candidate_step_schema import CandidateStepCreate, CandidateStepUpdate
 from app.repositories.base_repository import BaseRepository
+from app.repositories.mixins.filterable_repository import FilterableRepositoryMixin
 
-class CandidateStepRepository(BaseRepository[CandidateStep, CandidateStepCreate, CandidateStepUpdate]):
+class CandidateStepRepository(
+    BaseRepository[
+        CandidateStep, 
+        CandidateStepCreate, 
+        CandidateStepUpdate
+        ], 
+    FilterableRepositoryMixin[CandidateStep]):
     """
     Repository handling CRUD operations for the Candidate model.
 

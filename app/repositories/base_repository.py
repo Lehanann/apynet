@@ -1,6 +1,7 @@
-from typing import TypeVar, Generic, Type, List
+from typing import TypeVar, Generic, Type
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+
 from pydantic import BaseModel
 
 # Type variables pour les modèles SQLAlchemy et les schémas Pydantic
@@ -9,7 +10,13 @@ CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 
-class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
+class BaseRepository(
+    Generic[
+        ModelType, 
+        CreateSchemaType, 
+        UpdateSchemaType
+        ]
+    ):
     """
     Generic repository providing CRUD operations for a given SQLAlchemy model.
 
@@ -40,20 +47,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         return await self.db.get(self.model, id)
 
-    async def get_by_name(self, name: str) -> ModelType | None:
-        """
-        Retrieve a model instance by its name attribute.
-
-        Args:
-            name (str): The name of the instance.
-
-        Returns:
-            ModelType | None: The matching instance if found, otherwise None.
-        """
-        result = await self.db.execute(select(self.model).where(self.model.name == name))
-        return result.scalar_one_or_none()
-
-    async def get_all(self) -> List[ModelType]:
+    async def get_all(self) -> list[ModelType]:
         """
         Retrieve all instances of the model from the database.
 
@@ -98,11 +92,11 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             return None
 
         update_data = data.model_dump(exclude_unset=True)
-        if update_data:
-            for key, value in update_data.items():
-                setattr(instance, key, value)
-            await self.db.commit()
-            await self.db.refresh(instance)
+        
+        for key, value in update_data.items():
+            setattr(instance, key, value)
+        await self.db.commit()
+        await self.db.refresh(instance)
         return instance
 
     async def delete(self, id: int) -> bool:

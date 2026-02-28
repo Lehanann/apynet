@@ -27,6 +27,6 @@ class Profession(Base):
 
     id_profession: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
-    default_account_allowed: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("FALSE"))
-    default_material_allowed: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("FALSE"))
-    default_material: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, server_default=text("'{}'::jsonb"))
+    default_account_allowed: Mapped[bool] = mapped_column(Boolean, server_default=text("FALSE"))
+    default_material_allowed: Mapped[bool] = mapped_column(Boolean, server_default=text("FALSE"))
+    default_material: Mapped[dict[str, Any]] = mapped_column(JSONB, server_default=text("'{}'::jsonb"))

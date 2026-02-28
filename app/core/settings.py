@@ -19,5 +19,5 @@ class Settings(BaseSettings):
             f"@{self.PG_HOST}:{self.PG_PORT}/{self.PG_DB}"
         )
 
-
+    DOCUMENT_ROOT: str = Field(default="/data")
 settings = Settings()

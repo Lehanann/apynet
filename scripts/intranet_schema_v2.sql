@@ -20,8 +20,8 @@ CREATE TYPE structure_type_enum AS ENUM ('department','service');
 CREATE TABLE corporates (
     id_corporate SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE companies (
@@ -29,8 +29,8 @@ CREATE TABLE companies (
     name VARCHAR(100) NOT NULL,
     corporate_id INT NOT NULL,
     UNIQUE(name, corporate_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (corporate_id) REFERENCES corporates(id_corporate)
 );
 
@@ -39,8 +39,8 @@ CREATE TABLE sites (
     name VARCHAR(100) NOT NULL,
     address TEXT,
     company_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (company_id) REFERENCES companies(id_company)
 );
 
@@ -48,8 +48,8 @@ CREATE TABLE meeting_rooms (
     id_meeting_room SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     site_id INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (site_id) REFERENCES sites(id_site)
 );
 
@@ -58,8 +58,8 @@ CREATE TABLE departments (
     name VARCHAR(100) NOT NULL,
     company_id INT NOT NULL,
     UNIQUE(name, company_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (company_id) REFERENCES companies(id_company)
 );
 
@@ -68,8 +68,8 @@ CREATE TABLE services (
     name VARCHAR(100) NOT NULL,
     department_id INT NOT NULL,
     UNIQUE(name, department_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (department_id) REFERENCES departments(id_department)
 );
 
@@ -79,22 +79,24 @@ CREATE TABLE professions (
     default_account_allowed BOOLEAN DEFAULT FALSE,
     default_material_allowed BOOLEAN DEFAULT FALSE,
     default_material JSONB,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE positions (
     id_position SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE employees (
     id_employee SERIAL PRIMARY KEY,
+    matricule INTEGER UNIQUE NOT NULL, 
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
+    document_token UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
     birth_date DATE CHECK (birth_date <= CURRENT_DATE),
     gender gender_enum NOT NULL DEFAULT 'x',
     address VARCHAR(255),
@@ -110,11 +112,11 @@ CREATE TABLE employees (
     service_id INT,
     department_id INT,
     company_id INT NOT NULL,
-    hire_date DATE DEFAULT CURRENT_DATE,
+    hire_date DATE NOT NULL DEFAULT CURRENT_DATE,
     leave_date DATE,
-    archived BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    archived BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (profession_id) REFERENCES professions(id_profession),
     FOREIGN KEY (position_id) REFERENCES positions(id_position),
     FOREIGN KEY (service_id) REFERENCES services(id_service),
@@ -127,8 +129,8 @@ CREATE TABLE user_accounts (
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     work_email VARCHAR(100) UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP,
     employee_id INT NOT NULL UNIQUE,
     FOREIGN KEY (employee_id) REFERENCES employees(id_employee)
@@ -139,8 +141,8 @@ CREATE TABLE system_roles (
     name VARCHAR(50) NOT NULL UNIQUE,
     description TEXT,
     permission_level SMALLINT NOT NULL DEFAULT 1 CHECK (permission_level >= 1),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE user_roles (
@@ -156,8 +158,8 @@ CREATE TABLE materials (
     name VARCHAR(100) NOT NULL,
     type VARCHAR(50) NOT NULL,
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE user_materials (
@@ -174,8 +176,8 @@ CREATE TABLE phone_numbers (
     id_phone SERIAL PRIMARY KEY,
     internal_number VARCHAR(4) UNIQUE,
     external_number VARCHAR(15),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
@@ -197,8 +199,8 @@ CREATE TABLE candidates (
     email VARCHAR(100),
     phone VARCHAR(20),
     archived BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE candidate_steps (
@@ -301,11 +303,11 @@ INSERT INTO positions (name)
 VALUES ('employe'), ('responsable'), ('directeur');
 
 INSERT INTO employees 
-(first_name, last_name, birth_date, gender, personal_email, profession_id, position_id, service_id, department_id, company_id)
+(matricule, first_name, last_name, document_token,birth_date, gender, personal_email, profession_id, position_id, service_id, department_id, company_id)
 VALUES
-('jean', 'dupont', '1990-02-14', 'm', 'jean.dupont@example.com', 2, 1, 1, 1, 1),
-('sophie', 'martin', '1988-11-03', 'f', 'sophie.martin@example.com', 3, 2, 3, 2, 1),
-('paul', 'durand', '1995-07-09', 'm', 'paul.durand@example.com', 1, 1, 2, 1, 1);
+(522,'jean', 'dupont', 'f4a933d6-2f61-449d-ab22-c5cb3fc55285', '1990-02-14', 'm', 'jean.dupont@example.com', 2, 1, 1, 1, 1),
+(431,'sophie', 'martin', '5ec62f6d-d2a5-431f-9601-5aff3ec5cef0', '1988-11-03', 'f', 'sophie.martin@example.com', 3, 2, 3, 2, 1),
+(296,'paul', 'durand', '7efd3a4a-adf7-424a-9943-34bf396ddb19', '1995-07-09', 'm', 'paul.durand@example.com', 1, 1, 2, 1, 1);
 
 INSERT INTO system_roles (name, description, permission_level)
 VALUES 

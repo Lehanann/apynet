@@ -2,9 +2,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.tables.system_roles import SystemRole
 from app.schemas.system_role_schema import SystemRoleCreate, SystemRoleUpdate
 from app.repositories.base_repository import BaseRepository
+from app.repositories.mixins.filterable_repository import FilterableRepositoryMixin
+from app.repositories.mixins.name_search_repository import NameSearchRepositoryMixin
 
 
-class SystemRoleRepository(BaseRepository[SystemRole, SystemRoleCreate, SystemRoleUpdate]):
+class SystemRoleRepository(
+    BaseRepository[
+        SystemRole, 
+        SystemRoleCreate, 
+        SystemRoleUpdate
+        ], 
+    FilterableRepositoryMixin[SystemRole], 
+    NameSearchRepositoryMixin[SystemRole]
+    ):
     """
     Repository handling CRUD operations for the SystemRole model.
 

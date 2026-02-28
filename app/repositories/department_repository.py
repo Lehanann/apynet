@@ -2,8 +2,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.tables.department import Department
 from app.schemas.department_schema import DepartmentCreate, DepartmentUpdate
 from app.repositories.base_repository import BaseRepository
+from app.repositories.mixins.filterable_repository import FilterableRepositoryMixin
+from app.repositories.mixins.name_search_repository import NameSearchRepositoryMixin
 
-class DepartmentRepository(BaseRepository[Department, DepartmentCreate, DepartmentUpdate]):
+class DepartmentRepository(
+    BaseRepository[
+        Department, 
+        DepartmentCreate, 
+        DepartmentUpdate
+        ], 
+    FilterableRepositoryMixin[Department], 
+    NameSearchRepositoryMixin[Department]
+    ):
     """
     Repository handling CRUD operations for the Department model.
 

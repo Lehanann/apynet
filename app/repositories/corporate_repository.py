@@ -2,8 +2,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.tables.corporate import Corporate
 from app.schemas.corporate_schema import CorporateCreate, CorporateUpdate
 from app.repositories.base_repository import BaseRepository
+from app.repositories.mixins.filterable_repository import FilterableRepositoryMixin
+from app.repositories.mixins.name_search_repository import NameSearchRepositoryMixin
 
-class CorporateRepository(BaseRepository[Corporate, CorporateCreate, CorporateUpdate]):
+class CorporateRepository(
+    BaseRepository[
+        Corporate, 
+        CorporateCreate, 
+        CorporateUpdate
+        ], 
+    FilterableRepositoryMixin[Corporate], 
+    NameSearchRepositoryMixin[Corporate]
+    ):
     """
     Repository handling CRUD operations for the Corporate model.
 

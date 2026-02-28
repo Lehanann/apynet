@@ -1,9 +1,18 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.repositories.candidate_repository import CandidateRepository
 from app.schemas.candidate_schema import CandidateCreate, CandidateUpdate, CandidateRead
-from app.logic.base_service import BaseService, RepositoryType
+from app.logic.base_service import BaseService
+from app.models.tables.candidate import Candidate
 
-class CandidateService(BaseService[CandidateRepository, CandidateCreate, CandidateUpdate, CandidateRead]):
+class CandidateService(
+    BaseService[
+        CandidateRepository, 
+        CandidateCreate, 
+        CandidateUpdate, 
+        CandidateRead, 
+        Candidate
+        ]
+    ):
     """
     Service for handling company-related operations.
 

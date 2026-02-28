@@ -9,6 +9,7 @@ class EmployeeBase(BaseModel):
     Base schema for the employee, shared by create, update, and read operations and inherited by other schemas.
 
     Attributes:
+        matricule (int): Matricule of the Employee.
         first_name (str): First name of the employee.
         last_name (str): Last name of the employee.
         birth_date (date): Birth date of the employee.
@@ -28,16 +29,16 @@ class EmployeeBase(BaseModel):
         company_id (int): Foreign key referencing the Company entity.
         hire_date (date): Date when the employee was hired.
         leave_date (date): Date when the employee left the company.
-        archived (bool): Indicates whether the employee is archived.
 
     Notes:
-        - The first_name, last_name, profession_id, position_id, company_id, hire_date are required.
+        - The matricule,first_name, last_name, profession_id, position_id, company_id, hire_date are required.
         - The first_name, last_name must be 50 characters max.
         - The personal_email, emergency_contact_name and spouse_name must be 100 characters max.
         - The address must be 255 characters max.
         - The social_security_number must be 30 characters max.
         - The personal_phone, emergency_contact_phone and spouse_phone must be 20 characters max.
     """
+    matricule: int = Field(..., description="Matricule of the employee.")
     first_name: str = Field(..., max_length=50, description="First name of the employee.")
     last_name: str = Field(..., max_length=50, description="Last name of the employee.")
     birth_date: Optional[date] = Field(None, description="Birth date of the employee.")
@@ -56,8 +57,7 @@ class EmployeeBase(BaseModel):
     department_id: Optional[int] = Field(None, description="Foreign key referencing the Department entity.")
     company_id: int = Field(..., description="Foreign key referencing the Company entity.")
     hire_date: date = Field(..., description="Date when the employee was hired.")
-    leave_date: Optional[date] = Field(None, description="Date when the employee left the company.")
-    archived: bool = Field(..., description="Indicates whether the employee is archived")
+    leave_date: date | None = Field(None, description="Date when the employee left the company.")
 
 class EmployeeCreate(EmployeeBase):
     """
@@ -94,7 +94,6 @@ class EmployeeUpdate(EmployeeBase):
     company_id: Optional[int] = None
     hire_date: Optional[date] = None
     leave_date: Optional[date] = None
-    archived: Optional[bool] = None
 
 class EmployeeRead(EmployeeBase):
     """

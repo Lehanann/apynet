@@ -2,8 +2,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.tables.site import Site
 from app.schemas.site_schema import SiteCreate, SiteUpdate
 from app.repositories.base_repository import BaseRepository
+from app.repositories.mixins.filterable_repository import FilterableRepositoryMixin
+from app.repositories.mixins.name_search_repository import NameSearchRepositoryMixin
 
-class SiteRepository(BaseRepository[Site, SiteCreate, SiteUpdate]):
+class SiteRepository(
+    BaseRepository[
+        Site, 
+        SiteCreate, 
+        SiteUpdate
+        ], 
+    FilterableRepositoryMixin[Site], 
+    NameSearchRepositoryMixin[Site]
+    ):
     """
     Repository handling CRUD operations for the Site model.
 

@@ -2,8 +2,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.tables.service import Service
 from app.schemas.service_schema import ServiceCreate, ServiceUpdate
 from app.repositories.base_repository import BaseRepository
+from app.repositories.mixins.filterable_repository import FilterableRepositoryMixin
+from app.repositories.mixins.name_search_repository import NameSearchRepositoryMixin
 
-class ServiceRepository(BaseRepository[Service, ServiceCreate, ServiceUpdate]):
+class ServiceRepository(
+    BaseRepository[
+        Service, 
+        ServiceCreate, 
+        ServiceUpdate
+        ], 
+    FilterableRepositoryMixin[Service], 
+    NameSearchRepositoryMixin[Service]
+    ):
     """
     Repository handling CRUD operations for the Service model.
 
